@@ -13,6 +13,7 @@ type ProfileName struct {
 }
 
 func ListProfiles() (profiles []Profile, err error) {
+	profiles = make([]Profile, 0)
 	query := `
 	SELECT * FROM profiles
 	`
@@ -30,16 +31,13 @@ func ListProfiles() (profiles []Profile, err error) {
 		)
 		if err := rows.Scan(&id, &name, &enabled); err != nil {
 			log.Fatalf("scan the profiles: %v", err)
+		} else {
+			profiles = append(profiles, Profile{
+				Id:      id,
+				Name:    name,
+				Enabled: enabled,
+			})
 		}
-		profiles = append(profiles, Profile{
-			Id:      id,
-			Name:    name,
-			Enabled: enabled,
-		})
-	}
-
-	if err := rows.Close(); err != nil {
-		log.Fatalf("rows close: %v", err)
 	}
 
 	if err := rows.Err(); err != nil {

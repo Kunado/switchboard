@@ -20,6 +20,7 @@ type RecordValue struct {
 }
 
 func ListRecords() (records []Record, err error) {
+	records = make([]Record, 0)
 	query := `
 	SELECT cname_records.* FROM profiles
 	LEFT JOIN cname_records ON profiles.id = cname_records.profile_id
@@ -37,14 +38,15 @@ func ListRecords() (records []Record, err error) {
 			host, value   string
 		)
 		if err := rows.Scan(&id, &host, &value, &profileId); err != nil {
-			log.Fatalf("scan the cname_record: %v", err)
+			log.Println(err)
+		} else {
+			records = append(records, Record{
+				Id:        id,
+				Host:      host,
+				Value:     value,
+				ProfileId: profileId,
+			})
 		}
-		records = append(records, Record{
-			Id:        id,
-			Host:      host,
-			Value:     value,
-			ProfileId: profileId,
-		})
 	}
 
 	if err := rows.Close(); err != nil {
@@ -67,6 +69,9 @@ func FindRecordByValue(value string) (record Record, err error) {
 	)
 	`
 	err = Db.QueryRow(query, value).Scan(&record.Id, &record.Host, &record.Value, &record.ProfileId)
+	if err != nil {
+		log.Println(err)
+	}
 	return
 }
 
