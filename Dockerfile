@@ -4,7 +4,7 @@ ENV GOOS=linux
 ENV GOARCH=amd64
 WORKDIR /build
 
-COPY server/ .
+COPY switchboard-server/ .
 RUN go mod download && \
     go build -o main
 
