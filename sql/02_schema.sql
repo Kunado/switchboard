@@ -1,3 +1,5 @@
+\c switchboard
+
 CREATE TABLE "public"."cname_records" (
     "id" serial NOT NULL,
     "host" character varying(255) NOT NULL,
@@ -5,8 +7,6 @@ CREATE TABLE "public"."cname_records" (
     "profile_id" integer NOT NULL,
     PRIMARY KEY ("id")
 );
-
-ALTER TABLE ONLY "public"."cname_records" ADD CONSTRAINT "cname_records_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 CREATE TABLE "public"."profiles" (
     "id" serial NOT NULL,
@@ -16,3 +16,4 @@ CREATE TABLE "public"."profiles" (
 );
 
 ALTER TABLE public.profiles ADD CONSTRAINT uk UNIQUE (name);
+ALTER TABLE ONLY "public"."cname_records" ADD CONSTRAINT "cname_records_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
