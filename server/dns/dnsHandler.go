@@ -3,8 +3,8 @@ package dns
 import (
 	"fmt"
 	"log"
+	"os"
 	"regexp"
-	"strconv"
 	"switchboard/db"
 
 	"github.com/miekg/dns"
@@ -26,7 +26,7 @@ func parseQuery(m *dns.Msg) {
 					m.Answer = append(m.Answer, rr)
 				}
 			}
-		case dns.TypeCNAME:
+		default:
 			log.Printf("CNAME Record Query for %s\n", q.Name)
 			lastDotRegExp := regexp.MustCompile(".$")
 			record, _ := db.FindRecordByValue(lastDotRegExp.ReplaceAllString(q.Name, ""))
@@ -53,16 +53,24 @@ func handleDnsRequest(w dns.ResponseWriter, r *dns.Msg) {
 	w.WriteMsg(m)
 }
 
+func getPort() string {
+	port := os.Getenv("DNS_PORT")
+	if port == "" {
+		port = "53"
+	}
+	return port
+}
+
 func DnsServer() {
-	dns.HandleFunc("service.", handleDnsRequest)
-	port := 53530
+	dns.HandleFunc(".", handleDnsRequest)
+	port := getPort()
 
 	dnsServer := dns.Server{
-		Addr: ":" + strconv.Itoa(port),
+		Addr: ":" + port,
 		Net:  "udp",
 	}
 
-	log.Printf("Starting DNS server at %d port\n", port)
+	log.Printf("Starting DNS server at %s port\n", port)
 	err := dnsServer.ListenAndServe()
 	defer dnsServer.Shutdown()
 	if err != nil {

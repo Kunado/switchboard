@@ -1,27 +1,30 @@
 package web
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"strconv"
+	"os"
 )
 
-func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "World!")
+func getPort() string {
+	port := os.Getenv("HTTP_PORT")
+	if port == "" {
+		port = "80"
+	}
+	return port
 }
 
 func HttpServer() {
 	http.HandleFunc("/records", HandleRecords)
 	http.HandleFunc("/profiles", HandleProfiles)
 	http.HandleFunc("/switch_profile", HandleSwitchProfile)
-	port := 8080
+	port := getPort()
 
 	httpServer := http.Server{
-		Addr: ":" + strconv.Itoa(port),
+		Addr: ":" + port,
 	}
 
-	log.Printf("Starting HTTP server at %d port\n", port)
+	log.Printf("Starting HTTP server at %s port\n", port)
 	err := httpServer.ListenAndServe()
 	if err != nil {
 		log.Fatalf("Failed to start server: %s\n", err.Error())
