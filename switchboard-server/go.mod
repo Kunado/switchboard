@@ -1,4 +1,4 @@
-module switchboard
+module switchboard-server
 
 go 1.18
 

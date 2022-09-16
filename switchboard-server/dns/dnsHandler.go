@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"switchboard/db"
+	"switchboard-server/db"
 
 	"github.com/miekg/dns"
 )

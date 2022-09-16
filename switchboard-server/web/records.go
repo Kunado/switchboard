@@ -3,7 +3,8 @@ package web
 import (
 	"encoding/json"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/db"
+	"switchboard-server/types"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
@@ -42,7 +43,7 @@ func createRecord(w http.ResponseWriter, r *http.Request) (err error) {
 	length := r.ContentLength
 	body := make([]byte, length)
 	r.Body.Read(body)
-	var recordBuilder db.RecordBuilder
+	var recordBuilder types.RecordBuilder
 	json.Unmarshal(body, &recordBuilder)
 	record, err := db.CreateRecord(recordBuilder)
 	if err != nil {
@@ -61,7 +62,7 @@ func deleteRecord(w http.ResponseWriter, r *http.Request) (err error) {
 	length := r.ContentLength
 	body := make([]byte, length)
 	r.Body.Read(body)
-	var recordValue db.RecordValue
+	var recordValue types.RecordValue
 	json.Unmarshal(body, &recordValue)
 	records, err := db.DeleteRecord(recordValue.Value)
 	if err != nil {

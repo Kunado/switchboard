@@ -1,8 +1,8 @@
 package main
 
 import (
-	"switchboard/dns"
-	"switchboard/web"
+	"switchboard-server/dns"
+	"switchboard-server/web"
 )
 
 func main() {

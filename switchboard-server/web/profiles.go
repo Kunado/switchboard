@@ -3,7 +3,8 @@ package web
 import (
 	"encoding/json"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/db"
+	"switchboard-server/types"
 )
 
 func HandleProfiles(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +41,7 @@ func createProfile(w http.ResponseWriter, r *http.Request) (err error) {
 	length := r.ContentLength
 	body := make([]byte, length)
 	r.Body.Read(body)
-	var profileName db.ProfileName
+	var profileName types.ProfileName
 	json.Unmarshal(body, &profileName)
 	profile, err := db.CreateProfile(profileName.Name)
 	if err != nil {
@@ -59,7 +60,7 @@ func deleteProfile(w http.ResponseWriter, r *http.Request) (err error) {
 	length := r.ContentLength
 	body := make([]byte, length)
 	r.Body.Read(body)
-	var profileName db.ProfileName
+	var profileName types.ProfileName
 	json.Unmarshal(body, &profileName)
 	profiles, err := db.DeleteProfile(profileName.Name)
 	if err != nil {

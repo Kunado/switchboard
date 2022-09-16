@@ -1,26 +1,12 @@
 package db
 
-import "log"
+import (
+	"log"
+	"switchboard-server/types"
+)
 
-type Record struct {
-	Id        int
-	Host      string
-	Value     string
-	ProfileId int
-}
-
-type RecordBuilder struct {
-	Host        string `json:"host"`
-	Value       string `json:"value"`
-	ProfileName string `json:"profile_name"`
-}
-
-type RecordValue struct {
-	Value string `json:"value"`
-}
-
-func ListRecords() (records []Record, err error) {
-	records = make([]Record, 0)
+func ListRecords() (records []types.Record, err error) {
+	records = make([]types.Record, 0)
 	query := `
 	SELECT cname_records.* FROM profiles
 	LEFT JOIN cname_records ON profiles.id = cname_records.profile_id
@@ -40,7 +26,7 @@ func ListRecords() (records []Record, err error) {
 		if err := rows.Scan(&id, &host, &value, &profileId); err != nil {
 			log.Println(err)
 		} else {
-			records = append(records, Record{
+			records = append(records, types.Record{
 				Id:        id,
 				Host:      host,
 				Value:     value,
@@ -59,7 +45,7 @@ func ListRecords() (records []Record, err error) {
 	return
 }
 
-func FindRecordByValue(value string) (record Record, err error) {
+func FindRecordByValue(value string) (record types.Record, err error) {
 	query := `
 	SELECT cname_records.* FROM cname_records
 	LEFT JOIN profiles ON profiles.id = cname_records.profile_id
@@ -75,7 +61,7 @@ func FindRecordByValue(value string) (record Record, err error) {
 	return
 }
 
-func CreateRecord(recordBuilder RecordBuilder) (record Record, err error) {
+func CreateRecord(recordBuilder types.RecordBuilder) (record types.Record, err error) {
 	profile, err := FindProfileByName(recordBuilder.ProfileName)
 	if err != nil {
 		log.Println(err)
@@ -96,7 +82,7 @@ func CreateRecord(recordBuilder RecordBuilder) (record Record, err error) {
 	return
 }
 
-func DeleteRecord(name string) (records []Record, err error) {
+func DeleteRecord(name string) (records []types.Record, err error) {
 	deleteQuery := `
 	DELETE FROM cname_records WHERE value = $1;
 	`

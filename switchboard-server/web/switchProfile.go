@@ -3,7 +3,8 @@ package web
 import (
 	"encoding/json"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/db"
+	"switchboard-server/types"
 )
 
 func HandleSwitchProfile(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +23,7 @@ func switchProfile(w http.ResponseWriter, r *http.Request) (err error) {
 	length := r.ContentLength
 	body := make([]byte, length)
 	r.Body.Read(body)
-	var profileName db.ProfileName
+	var profileName types.ProfileName
 	json.Unmarshal(body, &profileName)
 	profile, err := db.SwitchProfile(profileName.Name)
 	if err != nil {
