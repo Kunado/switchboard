@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/types"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -23,8 +23,8 @@ var deleteRecordCmd = &cobra.Command{
 	Long:  `Delete a record with its value.`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var records []db.Record
-		recordValue := db.RecordValue{Value: args[0]}
+		var records []types.Record
+		recordValue := types.RecordValue{Value: args[0]}
 		recordValueJson, err := json.Marshal(recordValue)
 		if err != nil {
 			fmt.Println(err)

@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/types"
 
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,7 @@ var profilesCmd = &cobra.Command{
 	Short: "list profiles",
 	Long:  `List all profiles registered.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var profiles []db.Profile
+		var profiles []types.Profile
 		res, err := http.Get("http://localhost:8080/profiles")
 		if err != nil {
 			fmt.Println(err)

@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/types"
 
 	"github.com/spf13/cobra"
 )
@@ -22,8 +22,8 @@ var createRecordCmd = &cobra.Command{
 	Long:  `Create a new cname record`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var record db.Record
-		recordBuilder := db.RecordBuilder{Host: args[0], Value: args[1], ProfileName: args[2]}
+		var record types.Record
+		recordBuilder := types.RecordBuilder{Host: args[0], Value: args[1], ProfileName: args[2]}
 		recordBuilderJson, err := json.Marshal(recordBuilder)
 		if err != nil {
 			fmt.Println(err)

@@ -1,6 +1,6 @@
 package main
 
-import "switchboard/cmd"
+import "switchboard-cli/cmd"
 
 func main() {
 	cmd.Execute()

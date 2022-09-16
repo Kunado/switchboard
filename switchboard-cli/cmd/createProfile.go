@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/types"
 
 	"github.com/spf13/cobra"
 )
@@ -22,8 +22,8 @@ var createProfileCmd = &cobra.Command{
 	Long:  `Create new profile with its name`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var profile db.Profile
-		profileName := db.ProfileName{Name: args[0]}
+		var profile types.Profile
+		profileName := types.ProfileName{Name: args[0]}
 		profileNameJson, err := json.Marshal(profileName)
 		if err != nil {
 			fmt.Println(err)

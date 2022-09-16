@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"switchboard/db"
+	"switchboard-server/types"
 
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,7 @@ var recordsCmd = &cobra.Command{
 	Short: "list records",
 	Long:  `List records now server processable`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var records []db.Record
+		var records []types.Record
 		res, err := http.Get("http://localhost:8080/records")
 		if err != nil {
 			fmt.Println(err)

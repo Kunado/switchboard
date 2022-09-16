@@ -1,4 +1,4 @@
-module switchboard
+module switchboard-cli
 
 go 1.18
 
