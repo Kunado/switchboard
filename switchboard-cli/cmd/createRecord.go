@@ -21,30 +21,30 @@ var createRecordCmd = &cobra.Command{
 	Short: "create a new cname record",
 	Long:  `Create a new cname record`,
 	Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var record types.Record
 		recordBuilder := types.RecordBuilder{Host: args[0], Value: args[1], ProfileName: args[2]}
 		recordBuilderJson, err := json.Marshal(recordBuilder)
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		res, err := http.Post("http://localhost:8080/records", "application/json", bytes.NewBuffer(recordBuilderJson))
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		defer res.Body.Close()
 
 		if res.StatusCode != http.StatusOK {
-			fmt.Println("Something went wrong.\n")
+			return fmt.Errorf("Something went wrong. Status: %d\n", res.StatusCode)
 		} else {
 			body, _ := io.ReadAll(res.Body)
 			if err := json.Unmarshal(body, &record); err != nil {
-				fmt.Println(err)
-				return
+				return err
 			} else {
 				fmt.Printf("Successfully created a record Host: %v, Value: %v, ProfileName: %v\n", recordBuilder.Host, recordBuilder.Value, recordBuilder.ProfileName)
 			}
 		}
+		return nil
 	},
 }
 

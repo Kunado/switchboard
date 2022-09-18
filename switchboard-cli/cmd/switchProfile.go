@@ -22,37 +22,37 @@ var switchProfileCmd = &cobra.Command{
 	Short: "switch enabled profile",
 	Long:  `Switch enabled profile.`,
 	Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var profile types.Profile
 		profileName := types.ProfileName{Name: args[0]}
 		profileNameJson, err := json.Marshal(profileName)
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		req, err := http.NewRequest(http.MethodPut, "http://localhost:8080/switch_profile", bytes.NewBuffer(profileNameJson))
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		client := &http.Client{
 			Timeout: 30 * time.Second,
 		}
 		res, err := client.Do(req)
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		defer res.Body.Close()
 
 		if res.StatusCode != http.StatusOK {
-			fmt.Println("something went wrong.\n")
+			return fmt.Errorf("Something went wrong. Status: %d\n", res.StatusCode)
 		} else {
 			body, _ := io.ReadAll(res.Body)
 			if err := json.Unmarshal(body, &profile); err != nil {
-				fmt.Println(err)
-				return
+				return err
 			} else {
 				fmt.Printf("Switched profile to %v.\n", profile.Name)
 			}
 		}
+		return nil
 	},
 }
 

@@ -22,33 +22,32 @@ var deleteProfileCmd = &cobra.Command{
 	Short: "delete a profile",
 	Long:  `Delete a profile`,
 	Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var profiles []types.Profile
 		profileName := types.ProfileName{Name: args[0]}
 		profileNameJson, err := json.Marshal(profileName)
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		req, err := http.NewRequest(http.MethodDelete, "http://localhost:8080/profiles", bytes.NewBuffer(profileNameJson))
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		client := &http.Client{
 			Timeout: 30 * time.Second,
 		}
 		res, err := client.Do(req)
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		defer res.Body.Close()
 
 		if res.StatusCode != http.StatusOK {
-			fmt.Println("something went wrong.\n")
+			return fmt.Errorf("Something went wrong. Status: %d\n", res.StatusCode)
 		} else {
 			body, _ := io.ReadAll(res.Body)
 			if err := json.Unmarshal(body, &profiles); err != nil {
-				fmt.Println(err)
-				return
+				return err
 			} else {
 				fmt.Printf("Successfully deleted a profile: %v\n", profileName.Name)
 				for _, profile := range profiles {
@@ -60,6 +59,7 @@ var deleteProfileCmd = &cobra.Command{
 				}
 			}
 		}
+		return nil
 	},
 }
 

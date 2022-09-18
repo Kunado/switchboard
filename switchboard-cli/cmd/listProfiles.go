@@ -19,21 +19,20 @@ var profilesCmd = &cobra.Command{
 	Use:   "listProfiles",
 	Short: "list profiles",
 	Long:  `List all profiles registered.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var profiles []types.Profile
 		res, err := http.Get("http://localhost:8080/profiles")
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 		defer res.Body.Close()
 
 		if res.StatusCode != http.StatusOK {
-			fmt.Println("something went wrong.\n")
+			return fmt.Errorf("Something went wrong. Status: %d\n", res.StatusCode)
 		} else {
 			body, _ := io.ReadAll(res.Body)
 			if err := json.Unmarshal(body, &profiles); err != nil {
-				fmt.Println(err)
-				return
+				return err
 			} else {
 				for _, profile := range profiles {
 					if profile.Enabled {
@@ -44,6 +43,7 @@ var profilesCmd = &cobra.Command{
 				}
 			}
 		}
+		return nil
 	},
 }
 
