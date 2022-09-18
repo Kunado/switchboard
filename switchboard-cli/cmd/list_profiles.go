@@ -15,33 +15,39 @@ var profilesCmd = &cobra.Command{
 	Short: "list profiles",
 	Long:  `List all profiles registered.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var profiles []types.Profile
-		var endpoint string
-		endpoint = fmt.Sprintf("%s/profiles", config.Host)
-		res, err := http.Get(endpoint)
+		profiles, err := getProfiles()
 		if err != nil {
 			return err
 		}
-		defer res.Body.Close()
-
-		if res.StatusCode != http.StatusOK {
-			return fmt.Errorf("Something went wrong. Status: %d\n", res.StatusCode)
-		} else {
-			body, _ := io.ReadAll(res.Body)
-			if err := json.Unmarshal(body, &profiles); err != nil {
-				return err
+		for _, profile := range profiles {
+			if profile.Enabled {
+				fmt.Printf("* %v\n", profile.Name)
 			} else {
-				for _, profile := range profiles {
-					if profile.Enabled {
-						fmt.Printf("* %v\n", profile.Name)
-					} else {
-						fmt.Printf("  %v\n", profile.Name)
-					}
-				}
+				fmt.Printf("  %v\n", profile.Name)
 			}
 		}
 		return nil
 	},
+}
+
+func getProfiles() (profiles []types.Profile, err error) {
+	endpoint := fmt.Sprintf("%s/profiles", config.Host)
+	res, err := http.Get(endpoint)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		err = fmt.Errorf("Something went wrong while requesting to %s.\nStatus: %d\n", endpoint, res.StatusCode)
+		return
+	} else {
+		body, _ := io.ReadAll(res.Body)
+		if err = json.Unmarshal(body, &profiles); err != nil {
+			return
+		}
+	}
+	return profiles, nil
 }
 
 func init() {
