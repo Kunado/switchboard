@@ -29,7 +29,8 @@ var deleteRecordCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		req, err := http.NewRequest(http.MethodDelete, "http://localhost:8080/records", bytes.NewBuffer(recordValueJson))
+		endpoint := fmt.Sprintf("%s/records", config.Host)
+		req, err := http.NewRequest(http.MethodDelete, endpoint, bytes.NewBuffer(recordValueJson))
 		if err != nil {
 			return err
 		}

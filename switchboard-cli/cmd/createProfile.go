@@ -29,7 +29,8 @@ var createProfileCmd = &cobra.Command{
 			fmt.Println(err)
 			return err
 		}
-		res, err := http.Post("http://localhost:8080/profiles", "application/json", bytes.NewBuffer(profileNameJson))
+		endpoint := fmt.Sprintf("%s/profiles", config.Host)
+		res, err := http.Post(endpoint, "application/json", bytes.NewBuffer(profileNameJson))
 		if err != nil {
 			return err
 		}

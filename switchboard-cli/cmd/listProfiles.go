@@ -21,7 +21,9 @@ var profilesCmd = &cobra.Command{
 	Long:  `List all profiles registered.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var profiles []types.Profile
-		res, err := http.Get("http://localhost:8080/profiles")
+		var endpoint string
+		endpoint = fmt.Sprintf("%s/profiles", config.Host)
+		res, err := http.Get(endpoint)
 		if err != nil {
 			return err
 		}

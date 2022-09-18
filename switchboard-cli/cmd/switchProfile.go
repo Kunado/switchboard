@@ -29,7 +29,8 @@ var switchProfileCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		req, err := http.NewRequest(http.MethodPut, "http://localhost:8080/switch_profile", bytes.NewBuffer(profileNameJson))
+		endpoint := fmt.Sprintf("%s/switch_profile", config.Host)
+		req, err := http.NewRequest(http.MethodPut, endpoint, bytes.NewBuffer(profileNameJson))
 		if err != nil {
 			return err
 		}

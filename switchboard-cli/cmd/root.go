@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -21,7 +23,11 @@ to quickly create a Cobra application.`,
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
-var Host string
+type Config struct {
+	Host string
+}
+
+var config Config
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -42,5 +48,29 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.PersistentFlags().StringVar(&Host, "host", "HOST", "host to be connected to")
+
+	rootCmd.PersistentFlags().StringVar(&config.Host, "host", "http://localhost", "host to send requests to.\nYou can set host with host flag like --host=http://host.com,\nor definition of HOST=http://host.com in ~/.switchboardrc file.")
+	viper.BindPFlag("Host", rootCmd.PersistentFlags().Lookup("host"))
+
+	cobra.OnInitialize(func() {
+		homePath := os.Getenv("HOME")
+		_, err := os.Stat(fmt.Sprintf("%s/.switchboardrc", homePath))
+		if err == nil {
+			viper.SetConfigName(".switchboardrc")
+			viper.SetConfigType("env")
+			viper.AddConfigPath("$HOME")
+
+			if err := viper.ReadInConfig(); err != nil {
+				fmt.Printf("An error occurred while loading config file..\n")
+				fmt.Println(err)
+				os.Exit(1)
+			}
+
+			if err := viper.Unmarshal(&config); err != nil {
+				fmt.Printf("An error occurred while unmarshaling config file.\n")
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		}
+	})
 }

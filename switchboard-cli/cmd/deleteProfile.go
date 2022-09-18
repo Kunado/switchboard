@@ -29,7 +29,8 @@ var deleteProfileCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		req, err := http.NewRequest(http.MethodDelete, "http://localhost:8080/profiles", bytes.NewBuffer(profileNameJson))
+		endpoint := fmt.Sprintf("%s/profiles", config.Host)
+		req, err := http.NewRequest(http.MethodDelete, endpoint, bytes.NewBuffer(profileNameJson))
 		if err != nil {
 			return err
 		}

@@ -28,7 +28,8 @@ var createRecordCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		res, err := http.Post("http://localhost:8080/records", "application/json", bytes.NewBuffer(recordBuilderJson))
+		endpoint := fmt.Sprintf("%s/records", config.Host)
+		res, err := http.Post(endpoint, "application/json", bytes.NewBuffer(recordBuilderJson))
 		if err != nil {
 			return err
 		}

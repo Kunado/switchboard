@@ -21,7 +21,8 @@ var recordsCmd = &cobra.Command{
 	Long:  `List records now server processable`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var records []types.Record
-		res, err := http.Get("http://localhost:8080/records")
+		endpoint := fmt.Sprintf("%s/records", config.Host)
+		res, err := http.Get(endpoint)
 		if err != nil {
 			return err
 		}
